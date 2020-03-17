@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset='utf-8' />
+    <title>CASA0003 - Individual Viz</title>
+    <meta name='viewport' content='initial-scale=1,maximum-scale=1,user-scalable=no' />
+	<script src="https://api.mapbox.com/mapbox-gl-js/v1.8.1/mapbox-gl.js"></script>
+	<link href="https://api.mapbox.com/mapbox-gl-js/v1.8.1/mapbox-gl.css" rel="stylesheet" />
+    <link href='Mapbox_example9_styles.css' rel='stylesheet' />
+        <style>
+        body { margin:0; padding:0; }
+        #map { position:absolute; top:0; bottom:0; width:100%; }
+    </style>
+
+    <script async="" src="//www.google-analytics.com/analytics.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
+
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/egg.js/1.0/egg.min.js"></script>
+
+    <script type="text/javascript">
+        var egg = new Egg();
+        egg.addCode("r,a,h,u,l", function() {
+            jQuery('#egggif').fadeIn(500, function() {
+                window.setTimeout(function() { jQuery('#egggif').hide(); },
+                                  2000);
+            });
+        }, "You found my easter egg!");
+        egg.addHook(function(){
+            console.log("Hook called for: " + this.activeEgg.keys);
+            console.log(this.activeEgg.metadata);
+        });
+        egg.listen();
+
+    </script>
+
+    <style type="text/css">
+    #egggif {position: absolute; top:50%; left: 45%; display: none; }
+  </style>
+
+</head>
+
+<body>
+    <div id='map'>
+
+    <div class='session'>
+        <h2><p>Night Tube Usage in February 2017</p></h2>
+        <h3> This map highlights the popularity of the London Underground Night Tube in February of 2017.</h3>
+            <p>This is the second month during which all 5 tube lines (Central, Jubilee, Piccadilly, Northern and Victoria) became fully functional.</p>
+            <p>Data was accessed from <a href="https://tfl.gov.uk/corporate/transparency/freedom-of-information/foi-request-detail?referenceId=FOI-1215-1718"> TfL FOI</a>, and filtered according to Month and Day</p>
+</div>
+    </div>
+
+    <script>
+        mapboxgl.accessToken = 'pk.eyJ1IjoiemFhYWFhbmEiLCJhIjoiY2s1aTM3aXpuMDloMjNub3luczlxMTg0bCJ9.zwbUcoO7gjuL-qFhjZ17YA'; // Put your Mapbox Public Access token here
+        // Load a new map in the 'map' HTML div
+        var map = new mapboxgl.Map({
+            container: 'map', // container id
+            style: 'mapbox://styles/zaaaaana/ck7fgvgfn2pwc1iki7h4qwmo6', // style location
+            center: [-0.1, 51.5], // starting position [lng, lat]
+            zoom: 12 // starting zoom
+        });
+
+
+        // Create an array of the available data months
+        var years = [
+            'February'
+        ];
+
+
+
+        map.on('load', function() {
+            // This is the main function that runs when the user changes the data year
+            function setYear(year) {
+                // Set the label to the correct year
+                document.getElementById('year').textContent = years[year];
+                var pp = map.getPaintProperty('toob','circle-radius');
+
+                console.log(pp);
+                pp.property = years[year]+"2";
+
+                map.setPaintProperty('toob','circle-radius',pp);
+
+                console.log(map.getPaintProperty('toob','circle-radius'));
+
+                map.setLayoutProperty('toob', 'visibility', 'none');
+                map.setLayoutProperty('toob', 'visibility', 'visible');
+
+                var yearcol = String(years[year]) + "2";
+                var textfield = "{" + yearcol + "}K";
+
+                console.log(textfield);
+
+                map.setLayoutProperty('labels', 'text-field', textfield);
+                var filters = ['>', yearcol, 0];
+                map.setFilter('labels', filters);
+            }
+
+
+            // Add the proportional circle layer to the map
+            map.addLayer({
+                id: 'toob',
+                type: 'circle',
+                source: {
+                    type: 'vector',
+                    url: 'mapbox://zaaaaana.ck7q031i60i0j2ks58lowhw3m-38plp' // Your Mapbox tileset Map ID
+                },
+                'source-layer': 'toob', // name of tilesets
+                'layout': {
+                    'visibility': 'visible'
+                },
+                paint: {
+                    'circle-color': '#fffef7',
+                    'circle-opacity': 0.95,
+                    'circle-stroke-width': {
+                        stops: [[8, 1], [13, 4], [16, 5]]
+                    },
+                    'circle-stroke-color': '#000',
+                    'circle-stroke-opacity': 1,
+                    'circle-radius': {
+                        property: 'total',
+                        stops: [
+                            [{zoom: 9, value: 0}, 1],
+                            [{zoom: 9, value: 100}, 15],
+                            [{zoom: 12, value: 0}, 13],
+                            [{zoom: 12, value: 100}, 60],
+                            [{zoom: 16, value: 0}, 4],
+                            [{zoom: 16, value: 100}, 80],
+                        ]
+                    }}
+            });
+
+            // Add the label layer to the map
+            map.addLayer({
+                'id': 'labels',
+                'type': 'symbol',
+                'source': 'toob',
+                'source-layer': 'toob', // name of tilesets
+                'layout': {
+                    'text-field': '{total}K',
+                    'text-font': ['Open Sans Bold', 'Arial Unicode MS Bold'],
+                    'text-size': {
+                         stops: [[8, 5], [12.5, 5], [12.6, 6], [16, 15]]
+                     }
+                },
+                'paint': {
+                    'text-color': '#a8a8a8'
+                }
+                });
+
+            var filters = ['>', 'total', 0];
+            map.setFilter('labels', filters);
+
+            var prevyear = 0;
+
+
+            var mypopup = new mapboxgl.Popup({offset:[150,50],closeButton: false});
+            // Another event listener that adds the popup when the user puts their cursor over the tube circles
+            map.on('mouseover', 'toob', function (e) {
+                mypopup
+                    .setLngLat(e.features[0].geometry.coordinates)
+                    .setHTML("<h3>" + e.features[0].properties.stations + "</h3>Percentage of Friday travellers: " + e.features[0].properties.frip + "%<br />Percentage of Saturday Travellers: " + e.features[0].properties.sap + "%")
+                    .addTo(map);
+            });
+
+
+            // Change the cursor to a pointer when the mouse is over the stations layer.
+            map.on('mouseenter', 'toob', function () {
+                map.getCanvas().style.cursor = 'pointer';
+            });
+
+            // Change it back to a pointer when it leaves and remove the popup window.
+            map.on('mouseleave', 'toob', function () {
+                map.getCanvas().style.cursor = '';
+                mypopup.remove();
+            });
+        });
+
+
+
+</script>
+
+     <img id="egggif" src="https://media.giphy.com/media/26CaLWA2dcqz6hS4U/giphy.gif">
+
+</body>
+</html>
