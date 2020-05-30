@@ -1,7 +1,7 @@
 # Night Tube Usage in February 2017
 ### An individual visualisation showing the monthly number of passengers between August 2016 and February 2017.
 
-[logo]:https://ibb.co/tqWJtqR "Screencap"
+[logo](https://i.ibb.co/BySCxyk/tube-SS.png)
 
 The visualization created aims to highlight the flow of Night Tube passengers across the London Underground Tube network, for the first 6 months of Night Tube Serevice. The idea for this visualization takes inspiration from Olivier O’ Brien’s [‘Tube Heartbeat](https://oobrien.com/2016/08/tubeheartbeat/),’ which highlights the motion of passenger entering, alighting and interchanging within the London Underground during weekly daytime and evening services. 
 
