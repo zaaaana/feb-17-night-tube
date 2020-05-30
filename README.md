@@ -1,6 +1,8 @@
 # Night Tube Usage in February 2017
 ### An individual visualisation showing the monthly number of passengers between August 2016 and February 2017.
 
+[logo]:https://ibb.co/tqWJtqR "Screencap"
+
 The visualization created aims to highlight the flow of Night Tube passengers across the London Underground Tube network, for the first 6 months of Night Tube Serevice. The idea for this visualization takes inspiration from Olivier O’ Brien’s [‘Tube Heartbeat](https://oobrien.com/2016/08/tubeheartbeat/),’ which highlights the motion of passenger entering, alighting and interchanging within the London Underground during weekly daytime and evening services. 
 
 The concept of night tube was introduced in 2014, with services starting at the end of 2016. Central and Victoria were the first accessible lines From August 2016, followed by service on the Jubilee line in October 2016, Northern in November 2016, and lastly, the Piccadilly line on December of 2016. This interactive visualization will show the popularity of the service as each line is introduced in the timeframe.
